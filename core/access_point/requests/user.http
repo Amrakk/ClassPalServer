@@ -15,7 +15,7 @@ Content-Type: application/json
   "name": "John Doe",
   "email": "test@gmail.com",
   "password": "123456",
-  "phoneNumber": "0902529403",
+  "phoneNumber": "0123456789",
 }
 
 ### UPDATE (ADMIN or Authorized USER)
@@ -23,7 +23,7 @@ PATCH http://localhost:3000/api/v1/users/6766a7b0f98d0442e37d8313
 Content-Type: application/json
 
 {
-  "phoneNumber": "0902529403"
+  "phoneNumber": "0123456789"
 }
 
 ### UPDATE AVATAR (ADMIN or Authorized USER)
