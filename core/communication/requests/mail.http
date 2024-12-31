@@ -1,0 +1,9 @@
+### SEND FORGOT OTP
+POST http://localhost:3002/api/v1/mail/send-forgot-otp
+Content-Type: application/json
+
+{
+  "email": "hoangduy12823@gmail.com",
+  "otp": 123456
+}
+

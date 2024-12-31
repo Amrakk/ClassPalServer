@@ -1,0 +1,96 @@
+services:
+    ###############################
+    ##  CORE
+    ###############################
+
+    core_mongodb:
+        build: ./core/mongodb
+        expose:
+            - "27017"
+        networks:
+            - server_network
+
+    core_redis:
+        image: redis:7.4.0-alpine
+        expose:
+            - "6379"
+        networks:
+            - server_network
+
+    nginx:
+        image: nginx:1.27.2-alpine
+        ports:
+            - "${PUBLIC_PORT}:80"
+        volumes:
+            - ./core/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+        depends_on:
+            - access_point
+            - communication
+        networks:
+            - server_network
+
+    access_point:
+        build: ./core/access_point
+        expose:
+            - "3000"
+        environment:
+            - APP_NAME=${APP_NAME}
+            - ENV=${ENV}
+            - ORIGIN=${PUBLIC_ORIGIN}
+            - CLIENT_URL=${PUBLIC_ORIGIN}
+            - REDIS_URI=redis://core_redis:6379
+            - MONGO_URI=mongodb://core_mongodb:27017
+            - COMMUNICATION_API_URL=http://communication:3002/api/v1
+            - ACCESS_CONTROL_API_URL=http://access_control:3001/api/v1
+        env_file:
+            - ./core/access_point/.env
+        depends_on:
+            - core_redis
+            - core_mongodb
+        networks:
+            - server_network
+
+    access_control:
+        build: ./core/access_control
+        expose:
+            - "3001"
+        environment:
+            - APP_NAME=${APP_NAME}
+            - ENV=${ENV}
+            - ORIGIN=${PUBLIC_ORIGIN}
+            - CLIENT_URL=${PUBLIC_ORIGIN}
+            - REDIS_URI=redis://core_redis:6379
+            - MONGO_URI=mongodb://core_mongodb:2701
+        env_file:
+            - ./core/access_control/.env
+        depends_on:
+            - access_point
+        networks:
+            - server_network
+
+    communication:
+        build: ./core/communication
+        expose:
+            - "3002"
+        environment:
+            - APP_NAME=${APP_NAME}
+            - ENV=${ENV}
+            - ORIGIN=${PUBLIC_ORIGIN}
+            - CLIENT_URL=${PUBLIC_ORIGIN}
+            - REDIS_URI=redis://core_redis:6379
+            - MONGO_URI=mongodb://core_mongodb:27017
+        env_file:
+            - ./core/communication/.env
+        depends_on:
+            - access_point
+            - access_control
+        networks:
+            - server_network
+
+    ###############################
+    ##  SERVICES
+    ###############################
+
+networks:
+    server_network:
+        driver: bridge
