@@ -21,3 +21,4 @@ export const ApplicationModel = mongooat.Model("Application", applicationSchema)
 
 await ApplicationModel.dropIndexes();
 await ApplicationModel.createIndex({ name: 1 }, { unique: true });
+await ApplicationModel.createIndex({ origin: 1 }, { unique: true });
