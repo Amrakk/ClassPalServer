@@ -12,7 +12,7 @@ export const register = ApiController.callbackFactory<{}, { body: IReqApplicatio
             const { body } = req;
 
             let application = await ApplicationService.getByName(body.name);
-            console.log(JSON.stringify(application, undefined, 2));
+            
             if (application) await ApplicationService.updateById(application._id, body);
             else application = (await ApplicationService.insert([body]))[0];
 

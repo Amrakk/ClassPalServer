@@ -5,12 +5,11 @@ import { ApplicationModel } from "../../database/models/application.js";
 import { removeUndefinedKeys } from "../../utils/removeUndefinedKeys.js";
 
 import NotFoundError from "../../errors/NotFoundError.js";
+import ServiceResponseError from "../../errors/ServiceResponseError.js";
 
 import type { ObjectId } from "mongooat";
 import type { IApplication } from "../../interfaces/database/application.js";
 import type { IOffsetPagination, IReqApplication } from "../../interfaces/api/request.js";
-import BaseError from "../../errors/BaseError.js";
-import ServiceResponseError from "../../errors/ServiceResponseError.js";
 
 export default class ApplicationService {
     private static cacheKey = "applications";
