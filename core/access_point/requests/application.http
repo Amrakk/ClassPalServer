@@ -23,6 +23,23 @@ Content-Type: application/json
     "paradigm": 0
 }
 
+### REGISTER (APPLICATIONS)
+POST http://localhost:3000/api/v1/applications/register
+x-app-registry-key: 123456
+Content-Type: application/json
+
+{
+    "name": "Test Service",
+    "version": "0.0.0",
+    "author": "Amrakk",
+    "description": "Registering a test service",
+    "verifyRequired": true,
+    "protocol": "http",
+    "origin": "http://test:3000",
+    "basePath": "/api/v1",
+    "paradigm": 0
+}
+
 ### UPDATE (ADMIN)
 PATCH http://localhost:3000/api/v1/applications/6777687824ab2afd5c9a71e8
 Content-Type: application/json
