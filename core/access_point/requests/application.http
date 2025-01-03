@@ -1,0 +1,35 @@
+### GET (ADMIN)
+GET http://localhost:3000/api/v1/applications
+
+### GET WITH FILTER (ADMIN) (searchTerm)
+GET http://localhost:3000/api/v1/applications?searchTerm=en
+
+### GET BY ID (ADMIN)
+GET http://localhost:3000/api/v1/applications/676ea760923eac34f6844043
+
+### INSERT (ADMIN)
+POST http://localhost:3000/api/v1/applications
+Content-Type: application/json
+
+{
+    "name": "Test Service",
+    "version": "0.0.0",
+    "author": "Amrakk",
+    "description": "This is a test service",
+    "verifyRequired": true,
+    "protocol": "http",
+    "origin": "http://test:3000",
+    "basePath": "/api/v1",
+    "paradigm": 0
+}
+
+### UPDATE (ADMIN)
+PATCH http://localhost:3000/api/v1/applications/6777687824ab2afd5c9a71e8
+Content-Type: application/json
+
+{
+  "name": "Test Services"
+}
+
+### DELETE (ADMIN)
+DELETE http://localhost:3000/api/v1/applications/6777687824ab2afd5c9a71e8

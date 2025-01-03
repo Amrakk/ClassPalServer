@@ -15,11 +15,14 @@ export default class ApplicationService {
     private static cacheKey = "applications";
 
     // Query
-    public static async getAll(query: IReqApplication.Filter & IOffsetPagination): Promise<[IApplication[], number]> {
+    public static async getAll(
+        query: IReqApplication.Filter & IOffsetPagination,
+        noCache?: boolean
+    ): Promise<[IApplication[], number]> {
         const cache = redis.getRedis();
         const { page, limit, searchTerm } = query;
 
-        if (!page && !limit && !searchTerm) {
+        if (!page && !limit && !searchTerm && !noCache) {
             const applications = JSON.parse((await cache.get(this.cacheKey)) ?? "null") as IApplication[] | null;
             if (applications) return [applications, applications.length];
         }
@@ -93,14 +96,15 @@ export default class ApplicationService {
         const cache = redis.getRedis();
         const applications = JSON.parse((await cache.get(this.cacheKey)) ?? "[]") as IApplication[];
 
-        const index = applications.findIndex((app) => app._id === updatedApplication._id);
+        const index = applications.findIndex((app) => `${app._id}` === `${updatedApplication._id}`);
+        const beforeUpdateName = applications[index].name;
         applications[index] = updatedApplication;
         await cache.set(this.cacheKey, JSON.stringify(applications), "EX", 60 * 60 * 24);
 
         if (data.basePath || data.origin || data.name || data.verifyRequired !== undefined) {
             if (!apiGateway)
                 throw new ServiceResponseError("Access Point", "Application Update", "ApiGateway is not initialized");
-            await apiGateway.updateApplication(updatedApplication.name, updatedApplication);
+            await apiGateway.updateApplication(beforeUpdateName, updatedApplication);
         }
 
         return updatedApplication;

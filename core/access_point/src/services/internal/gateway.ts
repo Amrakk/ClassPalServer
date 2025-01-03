@@ -2,7 +2,7 @@ import { BASE_PATH } from "../../constants.js";
 import { verify } from "../../middlewares/verify.js";
 import { createProxyMiddleware } from "http-proxy-middleware";
 
-import type { Router } from "express";
+import type { Router, IRoute } from "express";
 import type { IApplication } from "../../interfaces/database/application.js";
 
 export default class ApiGateway {
@@ -30,7 +30,6 @@ export default class ApiGateway {
         });
     }
 
-    // TODO: test this method
     public async addApplications(newApplications: IApplication[]) {
         newApplications.forEach((newApplication) => {
             const proxyPath = `${BASE_PATH}/${newApplication.name.toLowerCase().replaceAll(" ", "-")}`;
@@ -48,13 +47,8 @@ export default class ApiGateway {
         });
     }
 
-    // TODO: test this method
     public async updateApplication(applicationName: string, newApplication: IApplication) {
-        const proxyPath = `${BASE_PATH}/${applicationName.toLowerCase().replaceAll(" ", "-")}`;
-        this.gatewayRouter.stack = this.gatewayRouter.stack.filter((layer: any) => {
-            const pathMatch = layer?.route?.path?.startsWith(proxyPath);
-            return !pathMatch;
-        });
+        this.removeApplication(applicationName);
 
         const newProxyPath = `${BASE_PATH}/${newApplication.name.toLowerCase().replaceAll(" ", "-")}`;
         const proxyMiddleware = createProxyMiddleware({
@@ -70,11 +64,12 @@ export default class ApiGateway {
         );
     }
 
-    // TODO: test this method
     public async removeApplication(applicationName: string) {
+        const proxyPath = `${applicationName.toLowerCase().replaceAll(" ", "-")}`;
+
         this.gatewayRouter.stack = this.gatewayRouter.stack.filter((layer: any) => {
-            const proxyPath = `${applicationName.toLowerCase().replaceAll(" ", "-")}`;
-            return !layer?.route?.path?.startsWith(proxyPath);
+            const layerPath = layer?.route?.path || layer?.regexp?.toString();
+            return !layerPath?.includes(proxyPath);
         });
     }
 }
