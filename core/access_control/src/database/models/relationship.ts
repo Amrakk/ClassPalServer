@@ -11,6 +11,7 @@ const relationshipSchema = z.object({
 export const relationshipModel = mongooat.Model("Relationship", relationshipSchema);
 
 await relationshipModel.dropIndexes();
+await relationshipModel.createIndex({ to: 1 });
 await relationshipModel.createIndex({ from: 1 });
 await relationshipModel.createIndex({ relationship: 1 });
 await relationshipModel.createIndex({ from: 1, to: 1, relationship: 1 }, { unique: true });

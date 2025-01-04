@@ -1,0 +1,37 @@
+### GET BY ID
+GET http://localhost:3001/api/v1/relationships/6778e8f67bb97d902f46d85c
+
+### GET BY FROM
+GET http://localhost:3001/api/v1/relationships/from/6777687824ab2afd5c9a71e8
+
+### GET BY TO
+GET http://localhost:3001/api/v1/relationships/to/6777687824ab2afd5c9a71e7
+
+### INSERT
+POST http://localhost:3001/api/v1/relationships
+Content-Type: application/json
+
+{
+    "from": "6777687824ab2afd5c9a71e8",
+    "to": "6777687824ab2afd5c9a71e6",
+    "relationship": "own"
+}
+
+### UPDATE
+PATCH http://localhost:3001/api/v1/relationships/6778e8f67bb97d902f46d85c
+Content-Type: application/json
+
+{
+    "relationship": "manage"
+}
+
+### DELETE BY ID
+DELETE http://localhost:3001/api/v1/relationships/6778e8f67bb97d902f46d85c
+
+
+### DELETE BY FROM
+DELETE http://localhost:3001/api/v1/relationships/from/6777687824ab2afd5c9a71e8
+
+
+### DELETE BY TO
+DELETE http://localhost:3001/api/v1/relationships/to/6777687824ab2afd5c9a71e6

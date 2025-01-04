@@ -7,7 +7,6 @@ import ForbiddenError from "../../../errors/ForbiddenError.js";
 import type { IReqApplication } from "../../../interfaces/api/request.js";
 import type { IApplication } from "../../../interfaces/database/application.js";
 
-// TODO: implement role, policy register
 export const register = ApiController.callbackFactory<{}, { body: IReqApplication.Register }, IApplication>(
     async (req, res, next) => {
         try {

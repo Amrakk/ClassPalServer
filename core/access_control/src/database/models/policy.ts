@@ -10,4 +10,5 @@ const policySchema = z.object({
 export const policyModel = mongooat.Model("Policy", policySchema);
 
 await policyModel.dropIndexes();
+await policyModel.createIndex({ action: 1 });
 await policyModel.createIndex({ action: 1, relationship: 1 }, { unique: true });

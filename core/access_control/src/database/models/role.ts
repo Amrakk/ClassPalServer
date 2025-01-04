@@ -2,14 +2,16 @@ import { z } from "zod";
 import mongooat from "../db.js";
 import { ZodObjectId } from "mongooat";
 
-const relationGroupsSchema = z.object({
-    mandatory: z.array(ZodObjectId),
-    optional: z.array(ZodObjectId),
-});
+export const relationGroupsSchema = z
+    .object({
+        mandatory: z.array(ZodObjectId),
+        optional: z.array(ZodObjectId),
+    })
+    .default({ mandatory: [], optional: [] });
 
 const roleSchema = z.object({
     name: z.string(),
-    isLocked: z.boolean(),
+    isLocked: z.boolean().default(false),
     privileges: relationGroupsSchema,
     parents: relationGroupsSchema,
 });
@@ -17,5 +19,4 @@ const roleSchema = z.object({
 export const roleModel = mongooat.Model("Role", roleSchema);
 
 await roleModel.dropIndexes();
-await roleModel.createIndex({ isLocked: 1 });
 await roleModel.createIndex({ name: 1 }, { unique: true });
