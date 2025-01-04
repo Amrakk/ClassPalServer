@@ -84,7 +84,6 @@ export default class RoleService {
         query: IReqRole.Filter & IOffsetPagination,
         noCache?: boolean
     ): Promise<[IRole[], number]> {
-        const cache = redis.getRedis();
         const { page, limit, searchTerm } = query;
         const skip = ((page ?? 1) - 1) * (limit ?? 0);
 

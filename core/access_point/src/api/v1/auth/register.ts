@@ -3,8 +3,6 @@ import UserService from "../../../services/internal/user.js";
 import { RESPONSE_CODE, RESPONSE_MESSAGE } from "../../../constants.js";
 import { setAccToken, setRefToken } from "../../../utils/tokenHandlers.js";
 
-import NotFoundError from "../../../errors/NotFoundError.js";
-
 import type { IReqAuth } from "../../../interfaces/api/request.js";
 import type { IResLogin } from "../../../interfaces/api/response.js";
 

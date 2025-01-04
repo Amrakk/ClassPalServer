@@ -1,7 +1,7 @@
-### GET (ADMIN)
+### GET
 GET http://localhost:3001/api/v1/roles
 
-### GET WITH FILTER (ADMIN) (searchTerm)
+### GET WITH FILTER (searchTerm)
 GET http://localhost:3001/api/v1/roles?searchTerm=en
 
 ### GET BY ID (ADMIN)
