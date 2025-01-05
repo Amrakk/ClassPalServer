@@ -1,5 +1,5 @@
 import ServiceResponseError from "../../errors/ServiceResponseError.js";
-import { ACCESS_POINT_API_URL, BASE_PATH, ORIGIN } from "../../constants.js";
+import { ACCESS_POINT_API_URL, APP_REGISTRY_KEY, BASE_PATH, ORIGIN } from "../../constants.js";
 
 export default class AccessControlService {
     public static async serviceRegistry(): Promise<void> {
@@ -18,6 +18,7 @@ export default class AccessControlService {
 
         return fetch(`${ACCESS_POINT_API_URL}/applications/register`, {
             headers: {
+                "x-app-registry-key": APP_REGISTRY_KEY,
                 "Content-Type": "application/json",
             },
             method: "POST",

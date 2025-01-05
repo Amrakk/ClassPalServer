@@ -1,0 +1,34 @@
+### REGISTER
+POST http://localhost:3001/api/v1/access/register
+Content-Type: application/json
+
+{
+    "roles": [{
+        "name": "Admin",
+        "isLocked": true,
+        "privileges": {
+            "mandatory": [],
+            "optional": []
+        },
+        "parents": {
+            "mandatory": [],
+            "optional": []
+        }
+    }],
+    "policies": [{
+        "action": "Application: manage-users",
+        "relationship": "one-to-one",
+        "isLocked": true
+    }]
+}
+
+### AUTHORIZE
+POST http://localhost:3001/api/v1/access/authorize
+Content-Type: application/json
+
+{
+    "fromId": "6777687824ab2afd5c9a71e8",
+    "fromRoleIds": ["67793141d093f9a0418633d7"],
+    "toId": "6777687824ab2afd5c9a71e7",
+    "action": "Application: manage-users"
+}

@@ -5,6 +5,8 @@ import { googleCallback } from "../middlewares/googleAuthentication.js";
 
 const authRouter = express.Router();
 
+authRouter.get("/get-roles", api.auth.getRoles);
+
 authRouter.post("/login", api.auth.login);
 authRouter.post("/register", api.auth.register);
 authRouter.post("/verify", verify(), api.auth.verify);

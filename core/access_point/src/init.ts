@@ -32,7 +32,7 @@ export default async function init(app: Express) {
     }
 
     const cache = redis.getRedis();
-    const applications = (await ApplicationService.getAll({}))[0];
+    const applications = (await ApplicationService.getAll({}, true))[0];
 
     await cache.set("applications", JSON.stringify(applications), "EX", 60 * 60 * 24);
 

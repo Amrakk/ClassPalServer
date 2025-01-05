@@ -37,7 +37,6 @@ export namespace IReqAuth {
 }
 
 // Application
-
 export namespace IReqApplication {
     export interface GetAllQuery {
         page?: string;

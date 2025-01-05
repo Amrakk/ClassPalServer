@@ -1,0 +1,30 @@
+### GET (ADMIN)
+GET http://localhost:3001/api/v1/policies
+
+### GET WITH FILTER (ADMIN) (searchTerm)
+GET http://localhost:3001/api/v1/policies?searchTerm=en
+
+### GET BY ACTION (ADMIN)
+GET http://localhost:3001/api/v1/policies/Application: manage-users
+
+### INSERT (ADMIN)
+POST http://localhost:3001/api/v1/policies
+Content-Type: application/json
+
+{
+    "action": "Application: manage-users",
+    "relationship": "administrative-of",
+    "isLocked": true
+}
+
+
+### UPDATE (ADMIN)
+PATCH http://localhost:3001/api/v1/policies/6777687824ab2afd5c9a71e8
+Content-Type: application/json
+
+{
+    "relationship": "supervises",
+}
+
+### DELETE (ADMIN)
+DELETE http://localhost:3001/api/v1/policies/677779141160e1ebdb29c3f3

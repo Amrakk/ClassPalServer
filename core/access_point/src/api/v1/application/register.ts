@@ -1,18 +1,22 @@
 import ApiController from "../../apiController.js";
-import { RESPONSE_CODE, RESPONSE_MESSAGE } from "../../../constants.js";
 import ApplicationService from "../../../services/internal/application.js";
+import { APP_REGISTRY_KEY, RESPONSE_CODE, RESPONSE_MESSAGE } from "../../../constants.js";
+
+import ForbiddenError from "../../../errors/ForbiddenError.js";
 
 import type { IReqApplication } from "../../../interfaces/api/request.js";
 import type { IApplication } from "../../../interfaces/database/application.js";
 
-// TODO: implement role, policy register
 export const register = ApiController.callbackFactory<{}, { body: IReqApplication.Register }, IApplication>(
     async (req, res, next) => {
         try {
-            const { body } = req;
+            const { body, headers } = req;
+            const { "x-app-registry-key": appRegistryKey } = headers;
+
+            if (appRegistryKey !== APP_REGISTRY_KEY) throw new ForbiddenError();
 
             let application = await ApplicationService.getByName(body.name);
-            console.log(JSON.stringify(application, undefined, 2));
+
             if (application) await ApplicationService.updateById(application._id, body);
             else application = (await ApplicationService.insert([body]))[0];
 

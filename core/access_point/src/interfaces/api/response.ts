@@ -34,24 +34,7 @@ export namespace IResGetAll {
 }
 
 export namespace IResGetById {
-    export interface Application {
-        _id: ObjectId;
-        name: string;
-        version: string;
-        description: string;
-        author: string;
-        protocol: string;
-        origin: string;
-        basePath: string;
-        paradigm: SUPPORTED_PARADIGM;
-    }
+    export interface Application extends IApplication {}
 
-    export interface User {
-        _id: ObjectId;
-        name: string;
-        email: string;
-        phoneNumber?: string;
-        avatarUrl: string;
-        socialMediaAccounts: ISocialMediaAccount[];
-    }
+    export interface User extends Omit<IUser, "password"> {}
 }

@@ -6,6 +6,7 @@
 
 // CORE
 export const APP_NAME = process.env.APP_NAME!;
+export const APP_REGISTRY_KEY = process.env.APP_REGISTRY_KEY!;
 export const ENV = process.env.ENV!;
 export const PORT = parseInt(process.env.PORT!);
 export const BASE_PATH = process.env.BASE_PATH!;
