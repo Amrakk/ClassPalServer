@@ -10,6 +10,20 @@ export interface ITimeBasedPagination {
     limit?: number;
 }
 
+export namespace IReqAccess {
+    export interface Authorize {
+        fromId: ObjectId | string;
+        fromRoleIds: (string | ObjectId)[];
+        toId: ObjectId | string;
+        action: string;
+    }
+
+    export interface Register {
+        roles?: IReqRole.Insert[];
+        policies?: IReqPolicy.Insert[];
+    }
+}
+
 export namespace IReqRole {
     export interface GetAllQuery {
         page?: string;
@@ -24,7 +38,7 @@ export namespace IReqRole {
 
     export interface Insert {
         name: string;
-        isLocked?: boolean;
+        isLocked?: boolean; // Default: false
         privileges?: {
             mandatory: (string | ObjectId)[];
             optional: (string | ObjectId)[];
@@ -71,7 +85,7 @@ export namespace IReqPolicy {
     export interface Insert {
         action: string;
         relationship: string;
-        isLocked: boolean;
+        isLocked?: boolean; // Default: false
     }
 
     export interface Update {

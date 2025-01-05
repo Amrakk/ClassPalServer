@@ -30,6 +30,16 @@ export default class RelationshipService {
         return relationshipModel.find({ to: result.data });
     }
 
+    public static async getByFromTo(from: string | ObjectId, to: string | ObjectId): Promise<IRelationship[]> {
+        const resultFrom = await ZodObjectId.safeParseAsync(from);
+        if (resultFrom.error) throw new NotFoundError("Relationship not found");
+
+        const resultTo = await ZodObjectId.safeParseAsync(to);
+        if (resultTo.error) throw new NotFoundError("Relationship not found");
+
+        return relationshipModel.find({ from: resultFrom.data, to: resultTo.data });
+    }
+
     // Mutation
     public static async insert(data: IReqRelationship.Insert[]): Promise<IRelationship[]> {
         return await relationshipModel.insertMany(data);

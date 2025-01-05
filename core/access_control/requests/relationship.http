@@ -13,8 +13,8 @@ Content-Type: application/json
 
 {
     "from": "6777687824ab2afd5c9a71e8",
-    "to": "6777687824ab2afd5c9a71e6",
-    "relationship": "own"
+    "to": "6777687824ab2afd5c9a71e7",
+    "relationship": "Application: manage-users"
 }
 
 ### UPDATE

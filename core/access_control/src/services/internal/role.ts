@@ -11,6 +11,7 @@ import NotFoundError from "../../errors/NotFoundError.js";
 import BadRequestError from "../../errors/BadRequestError.js";
 
 import type { ObjectId } from "mongooat";
+import type { ClientSession } from "mongodb";
 import type { IOffsetPagination, IReqRole } from "../../interfaces/api/request.js";
 import type { IRelationGroups, IRole, IRoleSimplified } from "../../interfaces/database/role.js";
 
@@ -113,7 +114,6 @@ export default class RoleService {
         return [roles, totalDocuments];
     }
 
-    // TODO: reimplement this
     public static async getById(id: string | ObjectId): Promise<IRole | null>;
     public static async getById(ids: (string | ObjectId)[]): Promise<IRole[]>;
     public static async getById(ids: string | ObjectId | (string | ObjectId)[]): Promise<IRole[] | IRole | null> {
@@ -146,10 +146,79 @@ export default class RoleService {
         return roleModel.aggregate(pipeline).toArray();
     }
 
+    public static async getAllPrivileges(ids: (string | ObjectId)[]): Promise<ObjectId[]> {
+        const result = await z.array(ZodObjectId).safeParseAsync(ids);
+        if (result.error) throw new NotFoundError("Role not found");
+
+        const pipeline = [
+            { $match: { _id: { $in: result.data } } },
+            {
+                $graphLookup: {
+                    from: "Role",
+                    startWith: "$parents.mandatory",
+                    connectFromField: "parents.mandatory",
+                    connectToField: "_id",
+                    as: "mandatoryParentRoles",
+                },
+            },
+            {
+                $graphLookup: {
+                    from: "Role",
+                    startWith: "$parents.optional",
+                    connectFromField: "parents.optional",
+                    connectToField: "_id",
+                    as: "optionalParentRoles",
+                },
+            },
+            {
+                $project: {
+                    allPrivileges: {
+                        $concatArrays: [
+                            "$privileges.mandatory",
+                            "$privileges.optional",
+                            {
+                                $reduce: {
+                                    input: "$mandatoryParentRoles",
+                                    initialValue: [],
+                                    in: {
+                                        $concatArrays: [
+                                            "$$value",
+                                            "$$this.privileges.mandatory",
+                                            "$$this.privileges.optional",
+                                        ],
+                                    },
+                                },
+                            },
+                            {
+                                $reduce: {
+                                    input: "$optionalParentRoles",
+                                    initialValue: [],
+                                    in: {
+                                        $concatArrays: [
+                                            "$$value",
+                                            "$$this.privileges.mandatory",
+                                            "$$this.privileges.optional",
+                                        ],
+                                    },
+                                },
+                            },
+                        ],
+                    },
+                },
+            },
+            { $unwind: "$allPrivileges" },
+            { $group: { _id: null, privileges: { $addToSet: "$allPrivileges" } } },
+            { $project: { _id: 0, privileges: 1 } },
+        ];
+
+        const resultAggregation = await roleModel.aggregate(pipeline).toArray();
+        return (resultAggregation[0]?.privileges ?? []) as unknown as ObjectId[];
+    }
+
     // Mutation
-    public static async insert(data: IReqRole.Insert[]): Promise<IRole[]> {
+    public static async insert(data: IReqRole.Insert[], options?: { session?: ClientSession }): Promise<IRole[]> {
         await this.validateInsertData(data);
-        const roles = await roleModel.insertMany(data);
+        const roles = await roleModel.insertMany(data, { session: options?.session });
 
         const cachedRoles = await this.getCachedRoles();
         if (cachedRoles) await this.updateCache([...cachedRoles, ...roles]);
@@ -171,7 +240,7 @@ export default class RoleService {
         });
 
         if (!updatedRole) throw new NotFoundError("Role not found or is locked");
-        const updatedRoles = cachedRoles.map((r) => (r._id === updatedRole._id ? updatedRole : r));
+        const updatedRoles = cachedRoles.map((r) => (`${r._id}` === `${updatedRole._id}` ? updatedRole : r));
         await this.updateCache(updatedRoles);
 
         return updatedRole;

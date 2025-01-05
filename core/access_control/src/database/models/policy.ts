@@ -4,7 +4,7 @@ import mongooat from "../db.js";
 const policySchema = z.object({
     action: z.string(),
     relationship: z.string(),
-    isLocked: z.boolean(),
+    isLocked: z.boolean().default(false),
 });
 
 export const policyModel = mongooat.Model("Policy", policySchema);

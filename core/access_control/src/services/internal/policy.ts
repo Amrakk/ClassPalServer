@@ -6,6 +6,7 @@ import { removeUndefinedKeys } from "../../utils/removeUndefinedKeys.js";
 import NotFoundError from "../../errors/NotFoundError.js";
 
 import type { ObjectId } from "mongooat";
+import type { ClientSession } from "mongodb";
 import type { IPolicy } from "../../interfaces/database/policy.js";
 import type { IOffsetPagination, IReqPolicy } from "../../interfaces/api/request.js";
 
@@ -61,8 +62,8 @@ export default class PolicyService {
     }
 
     // Mutation
-    public static async insert(data: IReqPolicy.Insert[]): Promise<IPolicy[]> {
-        return await policyModel.insertMany(data);
+    public static async insert(data: IReqPolicy.Insert[], options?: { session?: ClientSession }): Promise<IPolicy[]> {
+        return await policyModel.insertMany(data, { session: options?.session });
     }
 
     public static async updateById(id: string | ObjectId, data: IReqPolicy.Update): Promise<IPolicy> {

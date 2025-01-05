@@ -1,5 +1,6 @@
 import express from "express";
 import roleRouter from "./role.js";
+import accessRouter from "./access.js";
 import policyRouter from "./policy.js";
 import relationshipRouter from "./relationship.js";
 
@@ -10,6 +11,7 @@ router.get("/", (req, res) => {
 });
 
 router.use("/roles", roleRouter);
+router.use("/access", accessRouter);
 router.use("/policies", policyRouter);
 router.use("/relationships", relationshipRouter);
 
