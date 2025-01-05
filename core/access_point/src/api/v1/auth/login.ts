@@ -1,12 +1,8 @@
-import { ZodObjectId } from "mongooat";
 import ApiController from "../../apiController.js";
 import UserService from "../../../services/internal/user.js";
-import { CLIENT_URL, RESPONSE_CODE, RESPONSE_MESSAGE } from "../../../constants.js";
 import { setAccToken, setRefToken } from "../../../utils/tokenHandlers.js";
 import { googleRedirect } from "../../../middlewares/googleAuthentication.js";
-
-import { ValidateError } from "mongooat";
-import NotFoundError from "../../../errors/NotFoundError.js";
+import { CLIENT_URL, RESPONSE_CODE, RESPONSE_MESSAGE } from "../../../constants.js";
 
 import type { IUser } from "../../../interfaces/database/user.js";
 import type { IReqAuth } from "../../../interfaces/api/request.js";

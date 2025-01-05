@@ -20,7 +20,7 @@ export function verify(roles?: USER_ROLE[]) {
             const user = await UserService.getById(userID);
             if (!user) throw new UnauthorizedError();
 
-            // if (typeof roles === "object" && !roles.includes(user.role)) throw new ForbiddenError();
+            if (typeof roles === "object" && !roles.includes(user.role)) throw new ForbiddenError();
 
             req.ctx = { user };
 
