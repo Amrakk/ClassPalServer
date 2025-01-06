@@ -1,5 +1,5 @@
-import AccessControlService from "./services/external/accessControl.js";
+import AccessPointService from "./services/external/accessPoint.js";
 
 export default async function init() {
-    await AccessControlService.serviceRegistry();
+    await AccessPointService.serviceRegistry();
 }
