@@ -3,23 +3,35 @@ POST http://localhost:3001/api/v1/access/register
 Content-Type: application/json
 
 {
-    "roles": [{
-        "name": "Admin",
-        "isLocked": true,
-        "privileges": {
-            "mandatory": [],
-            "optional": []
+    "roles": [
+        {
+            "role": {
+                "name": "Teacher",
+                "privileges": [{ "action": "view-student", "relationship": "teaches" }]
+            },
+            "child": [{
+                "role": {
+                    "name": "Executive",
+                    "privileges": [{ "action": "view-school", "relationship": "established" }]
+                },
+                "child": []
+            }]
         },
-        "parents": {
-            "mandatory": [],
-            "optional": []
+        {
+            "role": {
+                "name": "Parent",
+                "privileges": [{ "action": "view-student", "relationship": "parent-of" }]
+            },
+            "child": []
+        },
+        {
+            "role": {
+                "name": "Student",
+                "privileges": [{ "action": "view-student", "relationship": "own" }]
+            },
+            "child": []
         }
-    }],
-    "policies": [{
-        "action": "Application: manage-users",
-        "relationship": "one-to-one",
-        "isLocked": true
-    }]
+    ]
 }
 
 ### AUTHORIZE

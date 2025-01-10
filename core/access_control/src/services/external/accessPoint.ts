@@ -1,7 +1,7 @@
 import ServiceResponseError from "../../errors/ServiceResponseError.js";
 import { ACCESS_POINT_API_URL, APP_REGISTRY_KEY, BASE_PATH, ORIGIN } from "../../constants.js";
 
-export default class AccessControlService {
+export default class AccessPointService {
     public static async serviceRegistry(): Promise<void> {
         const isDev = process.env.ENV === "development";
 
@@ -28,7 +28,7 @@ export default class AccessControlService {
             .then((res) => {
                 if (res.code !== 0)
                     throw new ServiceResponseError(
-                        "AccessControlService",
+                        "AccessPointService",
                         "serviceRegistry",
                         "Failed to register service",
                         res

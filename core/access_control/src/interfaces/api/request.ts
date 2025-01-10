@@ -18,9 +18,21 @@ export namespace IReqAccess {
         action: string;
     }
 
+    export interface Node {
+        role: {
+            name: string;
+            privileges: NodePrivilege[];
+        };
+        child: Node[];
+    }
+
+    export type NodePrivilege = {
+        action: string;
+        relationship: string;
+    };
+
     export interface Register {
-        roles?: IReqRole.Insert[];
-        policies?: IReqPolicy.Insert[];
+        roles?: Node[];
     }
 }
 
@@ -106,5 +118,9 @@ export namespace IReqRelationship {
         from?: ObjectId | string;
         to?: ObjectId | string;
         relationship?: string;
+    }
+
+    export interface DeleteByFromToIds {
+        ids: (string | ObjectId)[];
     }
 }

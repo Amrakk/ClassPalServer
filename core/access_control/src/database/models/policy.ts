@@ -1,7 +1,7 @@
 import { z } from "zod";
 import mongooat from "../db.js";
 
-const policySchema = z.object({
+export const policySchema = z.object({
     action: z.string(),
     relationship: z.string(),
     isLocked: z.boolean().default(false),

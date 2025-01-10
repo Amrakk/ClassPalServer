@@ -2,8 +2,6 @@ import ApiController from "../../apiController.js";
 import { RESPONSE_CODE, RESPONSE_MESSAGE } from "../../../constants.js";
 import { setAccToken, setRefToken } from "../../../utils/tokenHandlers.js";
 
-import NotFoundError from "../../../errors/NotFoundError.js";
-
 import type { IResLogin } from "../../../interfaces/api/response.js";
 
 export const verify = ApiController.callbackFactory<{}, {}, IResLogin>(async (req, res, next) => {

@@ -41,10 +41,6 @@ export default async function init(app: Express) {
 
     app.use(requestLogger);
     app.use(express.urlencoded({ extended: true }));
-
-    app.use(gatewayRouter);
-
-    app.use(express.json());
     app.use(BASE_PATH, router);
     app.use(errorHandler);
 }

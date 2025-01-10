@@ -24,10 +24,13 @@ export default class RoleService {
         await cache.set(this.cacheKey, JSON.stringify(roles), "EX", 60 * 60 * 24);
     }
 
-    public static async isRoleExists(id: ObjectId): Promise<boolean>;
-    public static async isRoleExists(ids: ObjectId[]): Promise<boolean>;
-    public static async isRoleExists(ids: ObjectId | ObjectId[]): Promise<boolean> {
-        return isIdsExist(roleModel, Array.isArray(ids) ? ids : [ids]);
+    public static async isRoleExists(id: ObjectId, options?: { session?: ClientSession }): Promise<boolean>;
+    public static async isRoleExists(ids: ObjectId[], options?: { session?: ClientSession }): Promise<boolean>;
+    public static async isRoleExists(
+        ids: ObjectId | ObjectId[],
+        options?: { session?: ClientSession }
+    ): Promise<boolean> {
+        return isIdsExist(roleModel, Array.isArray(ids) ? ids : [ids], options);
     }
 
     private static async getCachedRoles(): Promise<IRole[] | null> {
@@ -41,31 +44,41 @@ export default class RoleService {
         await cache.set(this.cacheKey, JSON.stringify(roles), "EX", 60 * 60 * 24);
     }
 
-    private static async validateInsertData(data: IReqRole.Insert[]): Promise<void> {
+    private static async validateInsertData(
+        data: IReqRole.Insert[],
+        options?: { session?: ClientSession }
+    ): Promise<void> {
         await Promise.all(
             data.map(async (role) => {
-                await this.validatePrivileges(role.privileges);
-                await this.validateParents(role.parents);
+                await this.validatePrivileges(role.privileges, options);
+                await this.validateParents(role.parents, options);
             })
         );
     }
 
-    private static async validatePrivileges(privileges?: IRelationGroups<string | ObjectId>): Promise<void> {
+    private static async validatePrivileges(
+        privileges?: IRelationGroups<string | ObjectId>,
+        options?: { session?: ClientSession }
+    ): Promise<void> {
         if (!privileges) return;
 
         privileges.mandatory = getUniqueArray(privileges.mandatory);
         privileges.optional = getUniqueArray(privileges.optional);
 
         const allPrivileges = [...privileges.mandatory, ...privileges.optional];
-        if (isDuplicate(allPrivileges)) throw new BadRequestError("Duplicate privileges");
+        if (isDuplicate(allPrivileges)) throw new BadRequestError("Duplicate privileges", { privileges });
 
         const parsedPrivileges = z.array(ZodObjectId).safeParse(allPrivileges);
-        if (parsedPrivileges.error) throw new BadRequestError("Invalid privileges");
+        if (parsedPrivileges.error) throw new BadRequestError("Invalid privileges", { privileges });
 
-        if (!(await PolicyService.isPolicyExists(parsedPrivileges.data))) throw new BadRequestError("Policy not found");
+        if (!(await PolicyService.isPolicyExists(parsedPrivileges.data, options)))
+            throw new BadRequestError("Policy not found", { privileges });
     }
 
-    private static async validateParents(parents?: IRelationGroups<string | ObjectId>): Promise<void> {
+    private static async validateParents(
+        parents?: IRelationGroups<string | ObjectId>,
+        options?: { session?: ClientSession }
+    ): Promise<void> {
         if (!parents) return;
 
         parents.mandatory = getUniqueArray(parents.mandatory);
@@ -77,7 +90,51 @@ export default class RoleService {
         const parsedParents = z.array(ZodObjectId).safeParse(allParents);
         if (parsedParents.error) throw new BadRequestError("Invalid parents");
 
-        if (!(await this.isRoleExists(parsedParents.data))) throw new BadRequestError("Parents not found");
+        if (!(await this.isRoleExists(parsedParents.data, options))) throw new BadRequestError("Parents not found");
+    }
+
+    private static async prepareUpdateData(role: IRole, data: IReqRole.PreprocessUpdate): Promise<IReqRole.Update> {
+        const dataSchema = z.object({
+            name: z.string().optional(),
+            isLocked: z.boolean().optional(),
+            optionalPrivileges: z.array(ZodObjectId).optional(),
+            optionalParents: z.array(ZodObjectId).optional(),
+        });
+
+        const result = await dataSchema.safeParseAsync(data);
+        if (result.error) throw new BadRequestError("Invalid data", { errors: result.error.errors });
+
+        let { optionalParents, optionalPrivileges, ...rest } = result.data;
+        const updateData: IReqRole.Update = { ...rest };
+
+        if (optionalPrivileges) {
+            optionalPrivileges = getUniqueArray(optionalPrivileges);
+            if (!(await PolicyService.isPolicyExists(optionalPrivileges)))
+                throw new BadRequestError("Policy not found");
+            updateData.privileges = {
+                ...role.privileges,
+                optional: optionalPrivileges.filter((id) => !role.privileges.mandatory.includes(id)),
+            };
+        }
+
+        if (optionalParents) {
+            optionalParents = getUniqueArray(optionalParents);
+            if (!(await this.isRoleExists(optionalParents))) throw new BadRequestError("Parents not found");
+            if (
+                !validateRoleInheritance(
+                    { ...role, parents: { ...role.parents, optional: optionalParents } },
+                    await roleModel.find()
+                )
+            )
+                throw new BadRequestError("Parent role creates a cycle");
+
+            updateData.parents = {
+                ...role.parents,
+                optional: optionalParents.filter((id) => !role.parents.mandatory.includes(id)),
+            };
+        }
+
+        return updateData;
     }
 
     // Query
@@ -217,7 +274,7 @@ export default class RoleService {
 
     // Mutation
     public static async insert(data: IReqRole.Insert[], options?: { session?: ClientSession }): Promise<IRole[]> {
-        await this.validateInsertData(data);
+        await this.validateInsertData(data, options);
         const roles = await roleModel.insertMany(data, { session: options?.session });
 
         const cachedRoles = await this.getCachedRoles();
@@ -246,47 +303,28 @@ export default class RoleService {
         return updatedRole;
     }
 
-    private static async prepareUpdateData(role: IRole, data: IReqRole.PreprocessUpdate): Promise<IReqRole.Update> {
-        const dataSchema = z.object({
-            name: z.string().optional(),
-            isLocked: z.boolean().optional(),
-            optionalPrivileges: z.array(ZodObjectId).optional(),
-            optionalParents: z.array(ZodObjectId).optional(),
-        });
-        const result = await dataSchema.safeParseAsync(data);
-        if (result.error) throw new BadRequestError("Invalid data", { errors: result.error.errors });
+    public static async upsert(data: IReqRole.Insert[], options?: { session?: ClientSession }): Promise<IRole[]> {
+        const [_, ...bulkOps] = await Promise.all([
+            this.validateInsertData(data, options),
+            ...data.map(
+                async (role) =>
+                    await roleModel.parse({ ...role }).then(({ _id, ...parsedRole }) => ({
+                        updateOne: {
+                            filter: { name: parsedRole.name },
+                            update: { $set: parsedRole },
+                            upsert: true,
+                        },
+                    }))
+            ),
+        ]);
 
-        let { optionalParents, optionalPrivileges, ...rest } = result.data;
-        const updateData: IReqRole.Update = { ...rest };
+        await roleModel.collection.bulkWrite(bulkOps, { session: options?.session });
 
-        if (optionalPrivileges) {
-            optionalPrivileges = getUniqueArray(optionalPrivileges);
-            if (!(await PolicyService.isPolicyExists(optionalPrivileges)))
-                throw new BadRequestError("Policy not found");
-            updateData.privileges = {
-                ...role.privileges,
-                optional: optionalPrivileges.filter((id) => !role.privileges.mandatory.includes(id)),
-            };
-        }
+        const filter = { $or: data.map((role) => ({ name: role.name })) };
+        const updatedRoles = await roleModel.find(filter, { session: options?.session });
+        await this.updateCache(updatedRoles);
 
-        if (optionalParents) {
-            optionalParents = getUniqueArray(optionalParents);
-            if (!(await this.isRoleExists(optionalParents))) throw new BadRequestError("Parents not found");
-            if (
-                !validateRoleInheritance(
-                    { ...role, parents: { ...role.parents, optional: optionalParents } },
-                    await roleModel.find()
-                )
-            )
-                throw new BadRequestError("Parent role creates a cycle");
-
-            updateData.parents = {
-                ...role.parents,
-                optional: optionalParents.filter((id) => !role.parents.mandatory.includes(id)),
-            };
-        }
-
-        return updateData;
+        return updatedRoles;
     }
 
     public static async deleteById(id: string | ObjectId): Promise<IRole> {

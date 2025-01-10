@@ -1,8 +1,7 @@
-import type { ObjectId } from "mongooat";
+import type { IUser } from "../database/user.js";
 import type BaseError from "../../errors/BaseError.js";
 import type { IApplication } from "../database/application.js";
-import type { ISocialMediaAccount, IUser } from "../database/user.js";
-import type { RESPONSE_CODE, RESPONSE_MESSAGE, SUPPORTED_PARADIGM } from "../../constants.js";
+import type { RESPONSE_CODE, RESPONSE_MESSAGE } from "../../constants.js";
 
 // CORE RESPONSE INTERFACE
 export interface IResponse<T = undefined> {

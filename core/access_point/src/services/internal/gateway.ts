@@ -1,8 +1,7 @@
-import { BASE_PATH } from "../../constants.js";
 import { verify } from "../../middlewares/verify.js";
 import { createProxyMiddleware } from "http-proxy-middleware";
 
-import type { Router, IRoute } from "express";
+import type { Router, Request } from "express";
 import type { IApplication } from "../../interfaces/database/application.js";
 
 export default class ApiGateway {
@@ -18,12 +17,22 @@ export default class ApiGateway {
         applications.forEach((app) => {
             if (coreApplications.includes(app.name)) return;
 
-            const proxyPath = `${BASE_PATH}/${app.name.toLowerCase().replaceAll(" ", "-")}`;
+            const proxyPath = `/${app.name.toLowerCase().replaceAll(" ", "-")}`;
 
             const proxy = createProxyMiddleware({
                 target: `${app.origin}${app.basePath}`,
                 changeOrigin: true,
                 pathRewrite: (path) => path.replace(proxyPath, app.basePath),
+                on: {
+                    proxyReq: (proxyReq, req, res) => {
+                        try {
+                            proxyReq.setHeader("x-user-id", `${(req as Request).ctx.user._id ?? ""}`);
+                            proxyReq.setHeader("x-user-role", `${(req as Request).ctx.user.role ?? ""}`);
+                        } catch (e) {
+                            proxyReq.setHeader("x-error", `1`);
+                        }
+                    },
+                },
             });
 
             this.gatewayRouter.use(proxyPath, app.verifyRequired ? verify() : (_, __, next) => next(), proxy);
@@ -32,11 +41,21 @@ export default class ApiGateway {
 
     public async addApplications(newApplications: IApplication[]) {
         newApplications.forEach((newApplication) => {
-            const proxyPath = `${BASE_PATH}/${newApplication.name.toLowerCase().replaceAll(" ", "-")}`;
+            const proxyPath = `/${newApplication.name.toLowerCase().replaceAll(" ", "-")}`;
             const proxy = createProxyMiddleware({
                 target: `${newApplication.origin}${newApplication.basePath}`,
                 changeOrigin: true,
                 pathRewrite: (path) => path.replace(proxyPath, newApplication.basePath),
+                on: {
+                    proxyReq: (proxyReq, req, res) => {
+                        try {
+                            proxyReq.setHeader("x-user-id", `${(req as Request).ctx.user._id ?? ""}`);
+                            proxyReq.setHeader("x-user-role", `${(req as Request).ctx.user.role ?? ""}`);
+                        } catch (e) {
+                            proxyReq.setHeader("x-error", `1`);
+                        }
+                    },
+                },
             });
 
             this.gatewayRouter.use(
@@ -50,11 +69,21 @@ export default class ApiGateway {
     public async updateApplication(applicationName: string, newApplication: IApplication) {
         this.removeApplication(applicationName);
 
-        const newProxyPath = `${BASE_PATH}/${newApplication.name.toLowerCase().replaceAll(" ", "-")}`;
+        const newProxyPath = `/${newApplication.name.toLowerCase().replaceAll(" ", "-")}`;
         const proxyMiddleware = createProxyMiddleware({
             target: `${newApplication.origin}${newApplication.basePath}`,
             changeOrigin: true,
             pathRewrite: (path) => path.replace(newProxyPath, newApplication.basePath),
+            on: {
+                proxyReq: (proxyReq, req, res) => {
+                    try {
+                        proxyReq.setHeader("x-user-id", `${(req as Request).ctx.user._id ?? ""}`);
+                        proxyReq.setHeader("x-user-role", `${(req as Request).ctx.user.role ?? ""}`);
+                    } catch (e) {
+                        proxyReq.setHeader("x-error", `1`);
+                    }
+                },
+            },
         });
 
         this.gatewayRouter.use(

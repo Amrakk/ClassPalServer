@@ -3,8 +3,9 @@ import ApiController from "../../apiController.js";
 import { RESPONSE_CODE, RESPONSE_MESSAGE } from "../../../constants.js";
 import CommunicationService from "../../../services/external/communication.js";
 
-import type { IReqAuth } from "../../../interfaces/api/request.js";
 import BadRequestError from "../../../errors/BadRequestError.js";
+
+import type { IReqAuth } from "../../../interfaces/api/request.js";
 
 export const forgotPassword = ApiController.callbackFactory<{}, { body: IReqAuth.ForgotPassword }, {}>(
     async (req, res, next) => {

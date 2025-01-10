@@ -1,4 +1,4 @@
-import { ZodObjectId } from "mongooat";
+import { z, ZodObjectId } from "mongooat";
 import { relationshipModel } from "../../database/models/relationship.js";
 
 import NotFoundError from "../../errors/NotFoundError.js";
@@ -56,7 +56,6 @@ export default class RelationshipService {
 
         return updatedRelationship;
     }
-
     public static async deleteById(id: string | ObjectId): Promise<IRelationship> {
         const result = await ZodObjectId.safeParseAsync(id);
         if (result.error) throw new NotFoundError("Relationship not found");
@@ -81,5 +80,13 @@ export default class RelationshipService {
 
         const deletedResult = await relationshipModel.deleteMany({ to: result.data });
         if (!deletedResult.deletedCount) throw new NotFoundError("Relationship not found");
+    }
+
+    public static async deleteByFromToIds(ids: (string | ObjectId)[]): Promise<void> {
+        const result = await z.array(ZodObjectId).safeParseAsync(ids);
+        if (result.error) throw new NotFoundError("Relationship not found");
+
+        const filter = { $or: [{ from: { $in: result.data } }, { to: { $in: result.data } }] };
+        await relationshipModel.deleteMany(filter);
     }
 }

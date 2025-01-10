@@ -11,10 +11,13 @@ import type { IPolicy } from "../../interfaces/database/policy.js";
 import type { IOffsetPagination, IReqPolicy } from "../../interfaces/api/request.js";
 
 export default class PolicyService {
-    public static async isPolicyExists(id: ObjectId): Promise<boolean>;
-    public static async isPolicyExists(ids: ObjectId[]): Promise<boolean>;
-    public static async isPolicyExists(ids: ObjectId | ObjectId[]): Promise<boolean> {
-        return isIdsExist(policyModel, Array.isArray(ids) ? ids : [ids]);
+    public static async isPolicyExists(id: ObjectId, options?: { session?: ClientSession }): Promise<boolean>;
+    public static async isPolicyExists(ids: ObjectId[], options?: { session?: ClientSession }): Promise<boolean>;
+    public static async isPolicyExists(
+        ids: ObjectId | ObjectId[],
+        options?: { session?: ClientSession }
+    ): Promise<boolean> {
+        return isIdsExist(policyModel, Array.isArray(ids) ? ids : [ids], options);
     }
 
     // Query
@@ -76,6 +79,32 @@ export default class PolicyService {
         if (!updatedPolicy) throw new NotFoundError("Policy not found or is locked");
 
         return updatedPolicy;
+    }
+
+    public static async upsert(data: IReqPolicy.Insert[], options?: { session?: ClientSession }): Promise<IPolicy[]> {
+        const bulkOps = await Promise.all(
+            data.map(
+                async (policy) =>
+                    await policyModel.parse({ ...policy }).then(({ _id, ...parsedPolicy }) => ({
+                        updateOne: {
+                            filter: { action: parsedPolicy.action, relationship: parsedPolicy.relationship },
+                            update: { $set: parsedPolicy },
+                            upsert: true,
+                        },
+                    }))
+            )
+        );
+
+        await policyModel.collection.bulkWrite(bulkOps, { session: options?.session });
+
+        const filter = {
+            $or: data.map((policy) => ({
+                action: policy.action,
+                relationship: policy.relationship,
+            })),
+        };
+
+        return policyModel.find(filter, { session: options?.session });
     }
 
     public static async deleteById(id: string | ObjectId): Promise<IPolicy> {
