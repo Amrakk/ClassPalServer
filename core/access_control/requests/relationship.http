@@ -35,3 +35,11 @@ DELETE http://localhost:3001/api/v1/relationships/from/6777687824ab2afd5c9a71e8
 
 ### DELETE BY TO
 DELETE http://localhost:3001/api/v1/relationships/to/6777687824ab2afd5c9a71e6
+
+### DELETE BY FROM TO IDS
+DELETE http://localhost:3001/api/v1/relationships
+Content-Type: application/json
+
+{
+    "ids": ["6778e8f67bb97d902f46d85c", "6778e8f67bb97d902f46d85d"]
+}

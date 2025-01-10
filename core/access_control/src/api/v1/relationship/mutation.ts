@@ -78,3 +78,16 @@ export const deleteByTo = ApiController.callbackFactory<{ to: string }, {}, {}>(
         next(err);
     }
 });
+
+export const deleteByFromToIds = ApiController.callbackFactory<{}, { body: IReqRelationship.DeleteByFromToIds }, {}>(
+    async (req, res, next) => {
+        try {
+            const { ids } = req.body;
+
+            await RelationshipService.deleteByFromToIds(ids);
+            return res.status(200).json({ code: RESPONSE_CODE.SUCCESS, message: RESPONSE_MESSAGE.SUCCESS });
+        } catch (err) {
+            next(err);
+        }
+    }
+);

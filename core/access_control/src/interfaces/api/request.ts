@@ -119,4 +119,8 @@ export namespace IReqRelationship {
         to?: ObjectId | string;
         relationship?: string;
     }
+
+    export interface DeleteByFromToIds {
+        ids: (string | ObjectId)[];
+    }
 }
