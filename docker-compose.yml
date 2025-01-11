@@ -59,10 +59,11 @@ services:
             - APP_NAME=${APP_NAME}
             - APP_REGISTRY_KEY=${APP_REGISTRY_KEY}
             - ENV=${ENV}
-            - ORIGIN=${PUBLIC_ORIGIN}
+            - ORIGIN=http://access_control:3001
             - CLIENT_URL=${PUBLIC_ORIGIN}
             - REDIS_URI=redis://core_redis:6379
-            - MONGO_URI=mongodb://core_mongodb:2701
+            - MONGO_URI=mongodb://core_mongodb:27017
+            - ACCESS_POINT_API_URL=http://access_point:3000/api/v1
         env_file:
             - ./core/access_control/.env
         depends_on:
@@ -78,10 +79,11 @@ services:
             - APP_NAME=${APP_NAME}
             - APP_REGISTRY_KEY=${APP_REGISTRY_KEY}
             - ENV=${ENV}
-            - ORIGIN=${PUBLIC_ORIGIN}
+            - ORIGIN=http://communication:3002
             - CLIENT_URL=${PUBLIC_ORIGIN}
             - REDIS_URI=redis://core_redis:6379
             - MONGO_URI=mongodb://core_mongodb:27017
+            - ACCESS_POINT_API_URL=http://access_point:3000/api/v1
         env_file:
             - ./core/communication/.env
         depends_on:

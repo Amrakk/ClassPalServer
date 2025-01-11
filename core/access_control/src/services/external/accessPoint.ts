@@ -16,23 +16,37 @@ export default class AccessPointService {
             paradigm: 0,
         });
 
-        return fetch(`${ACCESS_POINT_API_URL}/applications/register`, {
-            headers: {
-                "x-app-registry-key": APP_REGISTRY_KEY,
-                "Content-Type": "application/json",
-            },
-            method: "POST",
-            body: data,
-        })
-            .then((res) => res.json())
-            .then((res) => {
-                if (res.code !== 0)
+        const retry = async (retries: number): Promise<void> => {
+            try {
+                const res = await fetch(`${ACCESS_POINT_API_URL}/applications/register`, {
+                    headers: {
+                        "x-app-registry-key": APP_REGISTRY_KEY,
+                        "Content-Type": "application/json",
+                    },
+                    method: "POST",
+                    body: data,
+                });
+
+                const jsonResponse = await res.json();
+
+                if (jsonResponse.code !== 0) {
                     throw new ServiceResponseError(
                         "AccessPointService",
                         "serviceRegistry",
                         "Failed to register service",
-                        res
+                        jsonResponse
                     );
-            });
+                }
+            } catch (error) {
+                if (retries > 0) {
+                    await new Promise((resolve) => setTimeout(resolve, 5000));
+                    return retry(retries - 1);
+                } else {
+                    throw error;
+                }
+            }
+        };
+
+        await retry(3);
     }
 }

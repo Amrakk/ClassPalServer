@@ -13,6 +13,8 @@ import type { Express } from "express";
 export let apiGateway: ApiGateway | undefined = undefined;
 
 export default async function init(app: Express) {
+    apiGateway = new ApiGateway(gatewayRouter);
+
     if ((await ApplicationService.getByName("Access Point")) === null) {
         const isDev = process.env.ENV === "development";
 
@@ -35,8 +37,6 @@ export default async function init(app: Express) {
     const applications = (await ApplicationService.getAll({}, true))[0];
 
     await cache.set("applications", JSON.stringify(applications), "EX", 60 * 60 * 24);
-
-    apiGateway = new ApiGateway(gatewayRouter);
     apiGateway.init(applications);
 
     app.use(requestLogger);
