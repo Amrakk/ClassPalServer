@@ -15,6 +15,7 @@ export const CLIENT_URL = process.env.CLIENT_URL!;
 export const ACCESS_POINT_API_URL = process.env.ACCESS_POINT_API_URL!;
 
 // DATABASE
+export const BATCH_SIZE = parseInt(process.env.BATCH_SIZE!);
 export const MONGO_URI = process.env.MONGO_URI!;
 export const MONGO_DEFAULT_DB = process.env.MONGO_DEFAULT_DB ?? APP_NAME;
 export const REDIS_URI = process.env.REDIS_URI!;

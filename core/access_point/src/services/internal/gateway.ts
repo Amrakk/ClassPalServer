@@ -11,7 +11,7 @@ export default class ApiGateway {
         this.gatewayRouter = router;
     }
 
-    public async init(applications: IApplication[]) {
+    public init(applications: IApplication[]) {
         const coreApplications = ["Access Point", "Access Control", "Communication"];
 
         applications.forEach((app) => {
@@ -39,7 +39,7 @@ export default class ApiGateway {
         });
     }
 
-    public async addApplications(newApplications: IApplication[]) {
+    public addApplications(newApplications: IApplication[]) {
         newApplications.forEach((newApplication) => {
             const proxyPath = `/${newApplication.name.toLowerCase().replaceAll(" ", "-")}`;
             const proxy = createProxyMiddleware({
@@ -66,7 +66,7 @@ export default class ApiGateway {
         });
     }
 
-    public async updateApplication(applicationName: string, newApplication: IApplication) {
+    public updateApplication(applicationName: string, newApplication: IApplication) {
         this.removeApplication(applicationName);
 
         const newProxyPath = `/${newApplication.name.toLowerCase().replaceAll(" ", "-")}`;
@@ -93,7 +93,7 @@ export default class ApiGateway {
         );
     }
 
-    public async removeApplication(applicationName: string) {
+    public removeApplication(applicationName: string) {
         const proxyPath = `${applicationName.toLowerCase().replaceAll(" ", "-")}`;
 
         this.gatewayRouter.stack = this.gatewayRouter.stack.filter((layer: any) => {
