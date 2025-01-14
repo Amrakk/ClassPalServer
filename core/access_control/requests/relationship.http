@@ -1,3 +1,35 @@
+### BIND
+POST http://localhost:3001/api/v1/relationships/bind
+Content-Type: application/json
+
+{
+    "initiators": [
+        { "entityId": "6766a7b0f98d0442e37d8315", "relationship": "MANAGES" }
+    ],
+    "targetId": "6766a7b0f98d0442e37d8310",
+    "conditions": [
+        { "fromRel": "MANAGES", "toRel": "STUDIES_AT", "resultRel": "TEACHES" },
+        { "fromRel": "MANAGES", "toRel": "EMPLOYED_AT", "resultRel": "SUPERVISES_TEACHERS" },
+        { "fromRel": "MANAGES", "toRel": "ASSOCIATED_WITH", "resultRel": "SUPERVISES_PARENTS" }
+    ]
+}
+
+### UNBIND
+DELETE http://localhost:3001/api/v1/relationships/unbind
+Content-Type: application/json
+
+{
+    "terminators": [
+        { "entityId": "6766a7b0f98d0442e37d8315", "relationship": "MANAGES" }
+    ],
+    "targetId": "6766a7b0f98d0442e37d8310",
+    "conditions": [
+        { "fromRel": "MANAGES", "toRel": "STUDIES_AT", "resultRel": "TEACHES" },
+        { "fromRel": "MANAGES", "toRel": "EMPLOYED_AT", "resultRel": "SUPERVISES_TEACHERS" },
+        { "fromRel": "MANAGES", "toRel": "ASSOCIATED_WITH", "resultRel": "SUPERVISES_PARENTS" }
+    ]
+}
+
 ### GET BY ID
 GET http://localhost:3001/api/v1/relationships/6778e8f67bb97d902f46d85c
 

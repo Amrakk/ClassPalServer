@@ -5,9 +5,33 @@ import RelationshipService from "../../../services/internal/relationship.js";
 import type { IReqRelationship } from "../../../interfaces/api/request.js";
 import type { IRelationship } from "../../../interfaces/database/relationship.js";
 
-export const insert = ApiController.callbackFactory<
+export const bind = ApiController.callbackFactory<{}, { body: IReqRelationship.Bind }, {}>(async (req, res, next) => {
+    try {
+        const { body } = req;
+
+        await RelationshipService.bind(body);
+        return res.status(201).json({ code: RESPONSE_CODE.SUCCESS, message: RESPONSE_MESSAGE.SUCCESS });
+    } catch (err) {
+        next(err);
+    }
+});
+
+export const unbind = ApiController.callbackFactory<{}, { body: IReqRelationship.Unbind }, {}>(
+    async (req, res, next) => {
+        try {
+            const { body } = req;
+
+            await RelationshipService.unbind(body);
+            return res.status(200).json({ code: RESPONSE_CODE.SUCCESS, message: RESPONSE_MESSAGE.SUCCESS });
+        } catch (err) {
+            next(err);
+        }
+    }
+);
+
+export const upsert = ApiController.callbackFactory<
     {},
-    { body: IReqRelationship.Insert | IReqRelationship.Insert[] },
+    { body: IReqRelationship.Upsert | IReqRelationship.Upsert[] },
     IRelationship[]
 >(async (req, res, next) => {
     try {
@@ -17,7 +41,7 @@ export const insert = ApiController.callbackFactory<
         if (Array.isArray(body)) data = body;
         else data = [body];
 
-        const relationships = await RelationshipService.insert(data);
+        const relationships = await RelationshipService.upsert(data);
         return res
             .status(201)
             .json({ code: RESPONSE_CODE.SUCCESS, message: RESPONSE_MESSAGE.SUCCESS, data: relationships });
@@ -26,19 +50,18 @@ export const insert = ApiController.callbackFactory<
     }
 });
 
-export const updateById = ApiController.callbackFactory<
-    { id: string },
-    { body: IReqRelationship.Update },
-    IRelationship
+export const updateByFromTo = ApiController.callbackFactory<
+    {},
+    { body: IReqRelationship.UpdateByFromTo },
+    IRelationship[]
 >(async (req, res, next) => {
     try {
-        const { id } = req.params;
         const { body } = req;
 
-        const relationship = await RelationshipService.updateById(id, body);
+        const relationships = await RelationshipService.updateByFromTo(body);
         return res
             .status(200)
-            .json({ code: RESPONSE_CODE.SUCCESS, message: RESPONSE_MESSAGE.SUCCESS, data: relationship });
+            .json({ code: RESPONSE_CODE.SUCCESS, message: RESPONSE_MESSAGE.SUCCESS, data: relationships });
     } catch (err) {
         next(err);
     }

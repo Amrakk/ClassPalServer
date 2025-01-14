@@ -108,16 +108,45 @@ export namespace IReqPolicy {
 }
 
 export namespace IReqRelationship {
-    export interface Insert {
+    export interface Condition {
+        fromRel: string;
+        toRel: string;
+        resultRel: string;
+    }
+
+    export interface EntityRelationship {
+        entityId: string | ObjectId;
+        relationship: string;
+    }
+
+    export interface Bind {
+        initiators: EntityRelationship[];
+        targetId: string | ObjectId;
+        conditions: Condition[];
+    }
+
+    export interface Unbind {
+        terminators: EntityRelationship[];
+        targetId: string | ObjectId;
+        isTargetUnbound?: boolean;
+        conditions: Condition[];
+    }
+
+    export interface Query {
+        relationships: string[];
+    }
+
+    export interface Upsert {
         from: ObjectId | string;
         to: ObjectId | string;
         relationship: string;
     }
 
-    export interface Update {
-        from?: ObjectId | string;
-        to?: ObjectId | string;
-        relationship?: string;
+    export interface UpdateByFromTo {
+        from: ObjectId | string;
+        to: ObjectId | string;
+        relationships: string[];
+        exclude?: string[];
     }
 
     export interface DeleteByFromToIds {
