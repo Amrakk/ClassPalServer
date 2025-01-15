@@ -5,8 +5,16 @@ services:
 
     core_mongodb:
         build: ./core/mongodb
+        command: ["--replSet", "rs0", "--bind_ip_all", "--port", "27017"]
         expose:
             - "27017"
+        healthcheck:
+            test: echo "try { rs.status() } catch (err) { rs.initiate({_id:'rs0',members:[{_id:0,host:'core_mongodb:27017'}]}) }" | mongosh --port 27017 --quiet
+            interval: 5s
+            timeout: 30s
+            start_period: 0s
+            start_interval: 1s
+            retries: 30
         networks:
             - server_network
 
@@ -40,7 +48,7 @@ services:
             - ORIGIN=${PUBLIC_ORIGIN}
             - CLIENT_URL=${PUBLIC_ORIGIN}
             - REDIS_URI=redis://core_redis:6379
-            - MONGO_URI=mongodb://core_mongodb:27017
+            - MONGO_URI=mongodb://core_mongodb:27017/?replicaSet=rs0
             - COMMUNICATION_API_URL=http://communication:3002/api/v1
             - ACCESS_CONTROL_API_URL=http://access_control:3001/api/v1
         env_file:
@@ -62,7 +70,7 @@ services:
             - ORIGIN=http://access_control:3001
             - CLIENT_URL=${PUBLIC_ORIGIN}
             - REDIS_URI=redis://core_redis:6379
-            - MONGO_URI=mongodb://core_mongodb:27017
+            - MONGO_URI=mongodb://core_mongodb:27017/?replicaSet=rs0
             - ACCESS_POINT_API_URL=http://access_point:3000/api/v1
         env_file:
             - ./core/access_control/.env
@@ -82,7 +90,7 @@ services:
             - ORIGIN=http://communication:3002
             - CLIENT_URL=${PUBLIC_ORIGIN}
             - REDIS_URI=redis://core_redis:6379
-            - MONGO_URI=mongodb://core_mongodb:27017
+            - MONGO_URI=mongodb://core_mongodb:27017/?replicaSet=rs0
             - ACCESS_POINT_API_URL=http://access_point:3000/api/v1
         env_file:
             - ./core/communication/.env
