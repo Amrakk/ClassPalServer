@@ -28,6 +28,7 @@ export default class ApiGateway {
                         try {
                             proxyReq.setHeader("x-user-id", `${(req as Request).ctx.user._id ?? ""}`);
                             proxyReq.setHeader("x-user-role", `${(req as Request).ctx.user.role ?? ""}`);
+                            proxyReq.setHeader("x-user-name", `${(req as Request).ctx.user.name ?? ""}`);
                         } catch (e) {
                             proxyReq.setHeader("x-error", `1`);
                         }
@@ -51,6 +52,7 @@ export default class ApiGateway {
                         try {
                             proxyReq.setHeader("x-user-id", `${(req as Request).ctx.user._id ?? ""}`);
                             proxyReq.setHeader("x-user-role", `${(req as Request).ctx.user.role ?? ""}`);
+                            proxyReq.setHeader("x-user-name", `${(req as Request).ctx.user.name ?? ""}`);
                         } catch (e) {
                             proxyReq.setHeader("x-error", `1`);
                         }
@@ -79,6 +81,7 @@ export default class ApiGateway {
                     try {
                         proxyReq.setHeader("x-user-id", `${(req as Request).ctx.user._id ?? ""}`);
                         proxyReq.setHeader("x-user-role", `${(req as Request).ctx.user.role ?? ""}`);
+                        proxyReq.setHeader("x-user-name", `${(req as Request).ctx.user.name ?? ""}`);
                     } catch (e) {
                         proxyReq.setHeader("x-error", `1`);
                     }
