@@ -322,7 +322,7 @@ export default class RoleService {
 
         const filter = { $or: data.map((role) => ({ name: role.name })) };
         const updatedRoles = await roleModel.find(filter, { session: options?.session });
-        await this.updateCache(updatedRoles);
+        await this.updateCache(await roleModel.find());
 
         return updatedRoles;
     }
