@@ -14,6 +14,10 @@ export const ORIGIN = process.env.ORIGIN!;
 export const CLIENT_URL = process.env.CLIENT_URL!;
 export const ACCESS_POINT_API_URL = process.env.ACCESS_POINT_API_URL!;
 
+// LIMITS
+export const MAX_EMAILS_PER_DAY = parseInt(process.env.MAX_EMAILS_PER_DAY!);
+export const MAX_EMAILS_PER_REQUEST = parseInt(process.env.MAX_EMAILS_PER_REQUEST!);
+
 // GMAIL
 export const EMAIL = process.env.EMAIL!;
 export const EMAIL_PASS = process.env.EMAIL_PASS!;

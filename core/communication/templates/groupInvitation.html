@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Invitation to Join</title>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                background-color: #f9f9f9;
+                margin: 0;
+                padding: 0;
+                line-height: 1.6;
+            }
+            .header {
+                text-align: center;
+                background-color: #007bff;
+                color: white;
+                padding: 15px 0;
+                border-radius: 8px 8px 0 0;
+            }
+            .container {
+                background-color: white;
+                max-width: 700px;
+                margin: 40px auto;
+                border-radius: 8px;
+                box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+                padding: 30px;
+            }
+            .content {
+                padding: 10px 20px;
+                font-size: 16px;
+                color: #333;
+            }
+            .footer {
+                text-align: center;
+                color: #777;
+                font-size: 12px;
+                margin-top: 30px;
+            }
+
+            .highlight-box {
+                background-color: #f0f8ff;
+                padding: 20px;
+                border: 2px dashed #007bff;
+                border-radius: 8px;
+                text-align: center;
+                font-size: 18px;
+                font-weight: bold;
+                margin: 20px 0;
+            }
+            .expire-note {
+                font-weight: bold;
+                color: #dc3545;
+                text-align: center;
+                margin: 10px 0;
+            }
+            .cta-button {
+                display: block;
+                width: fit-content;
+                margin: 25px auto;
+                padding: 12px 25px;
+                background-color: #007bff;
+                color: white !important;
+                text-decoration: none;
+                font-weight: bold;
+                font-size: 16px;
+                border-radius: 5px;
+                text-align: center;
+                transition: background-color 0.3s ease;
+            }
+            .cta-button:hover {
+                background-color: #086bd6;
+            }
+            .additional-info {
+                margin-top: 20px;
+                background-color: #f9f9f9;
+                padding: 15px;
+                border-left: 4px solid #007bff;
+                border-radius: 5px;
+                font-size: 14px;
+                color: #555;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="header">
+                <h1>You're Invited!</h1>
+            </div>
+            <div class="content">
+                <p>Dear <strong>{{ recipientName }}</strong>,</p>
+                <p>
+                    <strong>{{ senderName }}</strong> has invited you to join the profile of
+                    <strong>{{ groupName }}</strong> as a/an <strong>{{ role }}</strong>. This will give you access to
+                    important updates, resources, and collaborations within the profile.
+                </p>
+                <div class="highlight-box">This invitation will expire on <strong>{{ expiredAt }}</strong>.</div>
+                <p>To accept this invitation and get started, click the button below:</p>
+                <a href="{{ navigateUrl }}" class="cta-button"> Join Now </a>
+                <p>
+                    If you have any questions or believe this invitation was sent in error, please contact our support
+                    team.
+                </p>
+                <div class="additional-info">
+                    <strong>Note:</strong> Joining this profile allows you to connect with other members and access
+                    exclusive resources. Please make sure you trust the sender before proceeding.
+                </div>
+                <br />
+                <p>Best regards,</p>
+                <p>The {{ appName }} Team</p>
+            </div>
+            <div class="footer">&copy; 2024 {{ appName }}. All rights reserved.</div>
+        </div>
+    </body>
+</html>

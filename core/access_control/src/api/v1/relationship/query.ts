@@ -74,3 +74,20 @@ export const getByTo = ApiController.callbackFactory<
         next(err);
     }
 });
+
+export const getByFromTo = ApiController.callbackFactory<{ from: string; to: string }, {}, IRelationship[]>(
+    async (req, res, next) => {
+        try {
+            const { from, to } = req.params;
+
+            const relationships = await RelationshipService.getByFromTo(from, to);
+            return res.status(200).json({
+                code: RESPONSE_CODE.SUCCESS,
+                message: RESPONSE_MESSAGE.SUCCESS,
+                data: relationships,
+            });
+        } catch (err) {
+            next(err);
+        }
+    }
+);
