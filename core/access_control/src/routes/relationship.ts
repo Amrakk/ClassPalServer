@@ -9,6 +9,7 @@ relationshipRouter.delete("/unbind", api.relationship.unbind);
 relationshipRouter.get("/:id", api.relationship.getById);
 relationshipRouter.get("/to/:to", api.relationship.getByTo);
 relationshipRouter.get("/from/:from", api.relationship.getByFrom);
+relationshipRouter.get("/:from/:to", api.relationship.getByFromTo);
 
 relationshipRouter.post("/", api.relationship.upsert);
 relationshipRouter.patch("/", api.relationship.updateByFromTo);
