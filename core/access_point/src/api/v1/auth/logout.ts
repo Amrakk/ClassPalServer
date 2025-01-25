@@ -22,7 +22,7 @@ export const logout = ApiController.callbackFactory<{}, {}, {}>(async (req, res,
             sameSite: isDev ? "lax" : "none",
         });
 
-        await deleteRefToken(user._id);
+        if (user) await deleteRefToken(user._id);
 
         return res.status(200).json({ code: RESPONSE_CODE.SUCCESS, message: RESPONSE_MESSAGE.SUCCESS, data: {} });
     } catch (err) {

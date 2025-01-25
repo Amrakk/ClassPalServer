@@ -2,7 +2,7 @@ import { ObjectId } from "mongooat";
 import redis from "../database/redis.js";
 import UserService from "../services/internal/user.js";
 import { setAccToken, verifyToken } from "../utils/tokenHandlers.js";
-import { ACCESS_TOKEN_SECRET, ENV, REFRESH_TOKEN_SECRET, USER_ROLE } from "../constants.js";
+import { ACCESS_TOKEN_SECRET, APP_REGISTRY_KEY, ENV, REFRESH_TOKEN_SECRET, USER_ROLE } from "../constants.js";
 
 import ForbiddenError from "../errors/ForbiddenError.js";
 import UnauthorizedError from "../errors/UnauthorizeError.js";
@@ -15,6 +15,12 @@ const isDev = ENV === "development";
 export function verify(roles?: USER_ROLE[]) {
     return async (req: Request, res: Response, next: NextFunction) => {
         try {
+            const { "x-app-registry-key": appKey } = req.headers;
+            if (appKey && appKey === APP_REGISTRY_KEY) {
+                req.ctx = { isSystem: true };
+                return next();
+            }
+
             const userID = await verifyCookies(req, res);
 
             const user = await UserService.getById(userID);
