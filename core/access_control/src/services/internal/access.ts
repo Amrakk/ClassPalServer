@@ -30,9 +30,13 @@ export default class AccessService {
         try {
             await session.withTransaction(async () => {
                 const allPrivileges = getAllPrivileges(inputRoles);
-                const privileges = await (isDev
-                    ? PolicyService.upsert(allPrivileges, { session })
-                    : PolicyService.insert(allPrivileges, { session }));
+
+                // const privileges = await (isDev
+                //     ? PolicyService.upsert(allPrivileges, { session })
+                //     : PolicyService.insert(allPrivileges, { session }));
+
+                // TODO: implement version mechanism for policies
+                const privileges = await PolicyService.upsert(allPrivileges, { session });
 
                 async function insertRoles(nodes: IReqAccess.Node[], parentId?: ObjectId) {
                     for (const node of nodes) {
@@ -64,9 +68,12 @@ export default class AccessService {
                             role.privileges.mandatory.push(privilegeId);
                         }
 
-                        const [insertedRole] = await (isDev
-                            ? RoleService.upsert([role], { session })
-                            : RoleService.insert([role], { session }));
+                        // const [insertedRole] = await (isDev
+                        //     ? RoleService.upsert([role], { session })
+                        //     : RoleService.insert([role], { session }));
+
+                        // TODO: implement version mechanism for roles
+                        const [insertedRole] = await RoleService.upsert([role], { session });
 
                         returnRoles.push({
                             _id: insertedRole._id,
