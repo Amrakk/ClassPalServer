@@ -3,6 +3,7 @@ import { createProxyMiddleware } from "http-proxy-middleware";
 
 import type { Router, Request } from "express";
 import type { IApplication } from "../../interfaces/database/application.js";
+import { toLowerNonAccentVietnamese } from "../../utils/removeDiacritics.js";
 
 export default class ApiGateway {
     private gatewayRouter: Router;
@@ -26,9 +27,12 @@ export default class ApiGateway {
                 on: {
                     proxyReq: (proxyReq, req, res) => {
                         try {
-                            proxyReq.setHeader("x-user-id", `${(req as Request).ctx.user._id ?? ""}`);
-                            proxyReq.setHeader("x-user-role", `${(req as Request).ctx.user.role ?? ""}`);
-                            proxyReq.setHeader("x-user-name", `${(req as Request).ctx.user.name ?? ""}`);
+                            const { user } = (req as Request).ctx;
+                            if (user) {
+                                proxyReq.setHeader("x-user-id", `${user._id ?? ""}`);
+                                proxyReq.setHeader("x-user-role", `${user.role ?? ""}`);
+                                proxyReq.setHeader("x-user-name", `${toLowerNonAccentVietnamese(user.name ?? "")}`);
+                            }
                         } catch (e) {
                             proxyReq.setHeader("x-error", `1`);
                         }
@@ -50,9 +54,12 @@ export default class ApiGateway {
                 on: {
                     proxyReq: (proxyReq, req, res) => {
                         try {
-                            proxyReq.setHeader("x-user-id", `${(req as Request).ctx.user._id ?? ""}`);
-                            proxyReq.setHeader("x-user-role", `${(req as Request).ctx.user.role ?? ""}`);
-                            proxyReq.setHeader("x-user-name", `${(req as Request).ctx.user.name ?? ""}`);
+                            const { user } = (req as Request).ctx;
+                            if (user) {
+                                proxyReq.setHeader("x-user-id", `${user._id ?? ""}`);
+                                proxyReq.setHeader("x-user-role", `${user.role ?? ""}`);
+                                proxyReq.setHeader("x-user-name", `${toLowerNonAccentVietnamese(user.name ?? "")}`);
+                            }
                         } catch (e) {
                             proxyReq.setHeader("x-error", `1`);
                         }
@@ -79,9 +86,12 @@ export default class ApiGateway {
             on: {
                 proxyReq: (proxyReq, req, res) => {
                     try {
-                        proxyReq.setHeader("x-user-id", `${(req as Request).ctx.user._id ?? ""}`);
-                        proxyReq.setHeader("x-user-role", `${(req as Request).ctx.user.role ?? ""}`);
-                        proxyReq.setHeader("x-user-name", `${(req as Request).ctx.user.name ?? ""}`);
+                        const { user } = (req as Request).ctx;
+                        if (user) {
+                            proxyReq.setHeader("x-user-id", `${user._id ?? ""}`);
+                            proxyReq.setHeader("x-user-role", `${user.role ?? ""}`);
+                            proxyReq.setHeader("x-user-name", `${toLowerNonAccentVietnamese(user.name ?? "")}`);
+                        }
                     } catch (e) {
                         proxyReq.setHeader("x-error", `1`);
                     }

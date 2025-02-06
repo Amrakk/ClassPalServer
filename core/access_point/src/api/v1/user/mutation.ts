@@ -34,12 +34,13 @@ export const updateById = ApiController.callbackFactory<{ id: string }, { body: 
             const { id } = req.params;
             const { body } = req;
             const requestUser = req.ctx.user;
+            const { isSystem } = req.ctx;
 
             const allowedUpdates = ["name", "avatarUrl", "avatarUrl", "phoneNumber", "socialMediaAccounts"];
             const updates = Object.keys(body);
             const isAllow = updates.every((update) => allowedUpdates.includes(update));
 
-            if (!isAllow || requestUser._id.toString() !== id) throw new ForbiddenError();
+            if (!isAllow || (!isSystem && requestUser && requestUser._id.toString() !== id)) throw new ForbiddenError();
 
             const user = await UserService.updateById(id, body);
 
@@ -56,8 +57,9 @@ export const updateAvatar = ApiController.callbackFactory<{ id: string }, {}, { 
             const { id } = req.params;
             const imageFile = req.file;
             const requestUser = req.ctx.user;
+            const { isSystem } = req.ctx;
 
-            if (requestUser._id.toString() !== id) throw new ForbiddenError();
+            if (!isSystem && requestUser && requestUser._id.toString() !== id) throw new ForbiddenError();
 
             if (!imageFile)
                 throw new ValidateError("Image is required", [
@@ -79,8 +81,9 @@ export const deleteById = ApiController.callbackFactory<{ id: string }, {}, IUse
     try {
         const { id } = req.params;
         const requestUser = req.ctx.user;
+        const { isSystem } = req.ctx;
 
-        if (requestUser._id.toString() !== id) throw new ForbiddenError();
+        if (!isSystem && requestUser && requestUser._id.toString() !== id) throw new ForbiddenError();
 
         const user = await UserService.deleteById(id);
 

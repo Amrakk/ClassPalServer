@@ -4,7 +4,8 @@ declare global {
     namespace Express {
         interface Request {
             ctx: {
-                user: IUser;
+                user?: IUser;
+                isSystem?: boolean;
             };
         }
     }

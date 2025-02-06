@@ -58,8 +58,9 @@ export const getById = ApiController.callbackFactory<{ id: string }, {}, IResGet
     try {
         const { id } = req.params;
         const requestUser = req.ctx.user;
+        const { isSystem } = req.ctx;
 
-        if (requestUser._id.toString() !== id) throw new ForbiddenError();
+        if (!isSystem && requestUser && requestUser._id.toString() !== id) throw new ForbiddenError();
 
         const user = await UserService.getById(id);
         if (!user) throw new NotFoundError("User not found");
