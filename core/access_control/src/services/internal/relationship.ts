@@ -60,7 +60,7 @@ export default class RelationshipService {
                                         input: initiators.filter(({ relationship }) => relationship === fromRel),
                                         as: "initiator",
                                         in: {
-                                            from: "$$initiator.initiatorId",
+                                            from: "$$initiator.entityId",
                                             to: "$from",
                                             relationship: resultRel,
                                         },
@@ -82,7 +82,7 @@ export default class RelationshipService {
                                         as: "initiator",
                                         in: {
                                             from: "$from",
-                                            to: "$$initiator.initiatorId",
+                                            to: "$$initiator.entityId",
                                             relationship: resultRel,
                                         },
                                     },
@@ -200,7 +200,7 @@ export default class RelationshipService {
 
         const filter = {
             from: result.data,
-            ...(query?.relationships && { relationship: { $in: query.relationships } }),
+            ...(query?.relationships ? { relationship: { $in: query.relationships } } : {}),
         };
 
         return relationshipModel.find(filter);
@@ -210,7 +210,10 @@ export default class RelationshipService {
         const result = await ZodObjectId.safeParseAsync(to);
         if (result.error) throw new NotFoundError("Relationship not found");
 
-        const filter = { to: result.data, ...(query?.relationships && { relationship: { $in: query.relationships } }) };
+        const filter = {
+            to: result.data,
+            ...(query?.relationships ? { relationship: { $in: query.relationships } } : {}),
+        };
 
         return relationshipModel.find(filter);
     }

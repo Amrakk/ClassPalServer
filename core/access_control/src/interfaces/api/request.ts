@@ -133,7 +133,7 @@ export namespace IReqRelationship {
     }
 
     export interface Query {
-        relationships: string[];
+        relationships?: string[];
     }
 
     export interface Upsert {
