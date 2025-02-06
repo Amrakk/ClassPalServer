@@ -27,7 +27,7 @@ export const getById = ApiController.callbackFactory<{ id: string }, {}, IRelati
 
 const querySchema = z
     .object({
-        relationships: z.preprocess((val) => (val ? [val].flat() : val), z.array(z.string())),
+        relationships: z.preprocess((val) => (val ? [val].flat() : val), z.array(z.string()).optional()),
     })
     .optional();
 
