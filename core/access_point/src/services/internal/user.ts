@@ -138,7 +138,6 @@ export default class UserService {
         data: {
             accountId: string;
             provider: SOCIAL_MEDIA_PROVIDER;
-            cartId?: string | ObjectId;
         }
     ): Promise<IUser> {
         const result = await ZodObjectId.safeParseAsync(id);
@@ -148,7 +147,6 @@ export default class UserService {
             { _id: result.data },
             {
                 $push: { socialMediaAccounts: { provider: data.provider, accountId: data.accountId } },
-                $set: { cartId: data.cartId ? new ObjectId(data.cartId) : undefined, updatedAt: new Date() },
             },
             { returnDocument: "after", projection: { _name: 0 } }
         );
