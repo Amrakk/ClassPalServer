@@ -1,7 +1,7 @@
 import mongooat from "../../database/db.js";
 import { BATCH_SIZE } from "../../constants.js";
 import { ValidateError, z, ZodObjectId } from "mongooat";
-import { relationshipModel } from "../../database/models/relationship.js";
+import { relationshipModel, relationshipSchema } from "../../database/models/relationship.js";
 
 import NotFoundError from "../../errors/NotFoundError.js";
 
@@ -229,7 +229,7 @@ export default class RelationshipService {
     }
 
     // Mutation
-    public static async upsert(data: IReqRelationship.Upsert[]): Promise<IRelationship[]> {
+    public static async upsert(data: IReqRelationship.UpsertDel[]): Promise<IRelationship[]> {
         const bulkOps = await Promise.all(
             data.map(
                 async (relationship) =>
@@ -305,6 +305,14 @@ export default class RelationshipService {
         if (result.error) throw new NotFoundError("Relationship not found");
 
         const filter = { $or: [{ from: { $in: result.data } }, { to: { $in: result.data } }] };
+        await relationshipModel.deleteMany(filter);
+    }
+
+    public static async deleteByFromToRel(data: IReqRelationship.UpsertDel[]): Promise<void> {
+        const result = await z.array(relationshipSchema).safeParseAsync(data);
+        if (result.error) throw new ValidateError("Invalid data", result.error.errors);
+
+        const filter = { $or: result.data };
         await relationshipModel.deleteMany(filter);
     }
 }

@@ -15,6 +15,8 @@ relationshipRouter.post("/", api.relationship.upsert);
 relationshipRouter.patch("/", api.relationship.updateByFromTo);
 
 relationshipRouter.delete("/", api.relationship.deleteByFromToIds);
+relationshipRouter.delete("/by-from-to-rel", api.relationship.deleteByFromToRelationship);
+
 relationshipRouter.delete("/:id", api.relationship.deleteById);
 relationshipRouter.delete("/to/:to", api.relationship.deleteByTo);
 relationshipRouter.delete("/from/:from", api.relationship.deleteByFrom);

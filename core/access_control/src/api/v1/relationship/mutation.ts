@@ -31,7 +31,7 @@ export const unbind = ApiController.callbackFactory<{}, { body: IReqRelationship
 
 export const upsert = ApiController.callbackFactory<
     {},
-    { body: IReqRelationship.Upsert | IReqRelationship.Upsert[] },
+    { body: IReqRelationship.UpsertDel | IReqRelationship.UpsertDel[] },
     IRelationship[]
 >(async (req, res, next) => {
     try {
@@ -108,6 +108,20 @@ export const deleteByFromToIds = ApiController.callbackFactory<{}, { body: IReqR
             const { ids } = req.body;
 
             await RelationshipService.deleteByFromToIds(ids);
+            return res.status(200).json({ code: RESPONSE_CODE.SUCCESS, message: RESPONSE_MESSAGE.SUCCESS });
+        } catch (err) {
+            next(err);
+        }
+    }
+);
+
+export const deleteByFromToRelationship = ApiController.callbackFactory<{}, { body: IReqRelationship.UpsertDel }, {}>(
+    async (req, res, next) => {
+        try {
+            const { body } = req;
+            const data = [body].flat();
+
+            await RelationshipService.deleteByFromToRel(data);
             return res.status(200).json({ code: RESPONSE_CODE.SUCCESS, message: RESPONSE_MESSAGE.SUCCESS });
         } catch (err) {
             next(err);

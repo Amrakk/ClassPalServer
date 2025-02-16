@@ -2,7 +2,7 @@ import { z } from "zod";
 import mongooat from "../db.js";
 import { ZodObjectId } from "mongooat";
 
-const relationshipSchema = z.object({
+export const relationshipSchema = z.object({
     from: ZodObjectId,
     to: ZodObjectId,
     relationship: z.string(),

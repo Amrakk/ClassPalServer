@@ -136,7 +136,7 @@ export namespace IReqRelationship {
         relationships?: string[];
     }
 
-    export interface Upsert {
+    export interface UpsertDel {
         from: ObjectId | string;
         to: ObjectId | string;
         relationship: string;
