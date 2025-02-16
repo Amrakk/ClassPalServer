@@ -34,10 +34,10 @@ Content-Type: application/json
 GET http://localhost:3001/api/v1/relationships/6778e8f67bb97d902f46d85c
 
 ### GET BY FROM
-GET http://localhost:3001/api/v1/relationships/from/6777687824ab2afd5c9a71e8
+GET http://localhost:3001/api/v1/relationships/from/67b1b74f8761094060981f37
 
 ### GET BY TO
-GET http://localhost:3001/api/v1/relationships/to/6777687824ab2afd5c9a71e7
+GET http://localhost:3001/api/v1/relationships/to/67b1b74f8761094060981f37
 
 ### INSERT
 POST http://localhost:3001/api/v1/relationships
@@ -74,4 +74,14 @@ Content-Type: application/json
 
 {
     "ids": ["6778e8f67bb97d902f46d85c", "6778e8f67bb97d902f46d85d"]
+}
+
+### DELETE BY FROM TO RELATIONSHIP
+DELETE http://localhost:3001/api/v1/relationships/by-from-to-rel
+Content-Type: application/json
+
+{
+    "from": "67b198b7e37bbd4d7ef2dcc0",
+    "to": "67a3a1aa33d93aaeeb1c84a3",
+    "relationship": "parent-of"
 }
