@@ -50,6 +50,16 @@ app.listen(PORT, async () => {
     console.log(`\nServer is running on port ${PORT}`);
 });
 
+process.on("uncaughtException", (err) => {
+    console.error(err);
+    app.emit("close");
+});
+
+process.on("unhandledRejection", (err) => {
+    console.error(err);
+    app.emit("close");
+});
+
 process.on("SIGINT", () => {
     app.emit("close");
 });

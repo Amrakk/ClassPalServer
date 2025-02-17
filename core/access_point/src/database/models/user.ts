@@ -21,7 +21,7 @@ const userSchema = z.object({
     password: z
         .string()
         .min(6)
-        .default(() => crypto.randomBytes(8).toString("hex"))
+        .default(() => crypto.randomUUID().toString())
         .transform(async (val) => await hashPassword(val)),
     phoneNumber: z
         .string()
