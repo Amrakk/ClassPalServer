@@ -105,8 +105,8 @@ services:
     ###############################
 
     service_mongodb:
-        build: ./core/mongodb
-        command: ["--replSet", "rs1", "--port", "27018"]
+        image: mongo:noble
+        command: ["--replSet", "rs1", "--bind_ip_all", "--port", "27018"]
         expose:
             - "27018"
         healthcheck:
