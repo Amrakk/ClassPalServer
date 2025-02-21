@@ -46,7 +46,7 @@ services:
             - APP_REGISTRY_KEY=${APP_REGISTRY_KEY}
             - ENV=${ENV}
             - ORIGIN=${PUBLIC_ORIGIN}
-            - CLIENT_URL=${PUBLIC_ORIGIN}
+            - CLIENT_URL=${CLIENT_URL}
             - REDIS_URI=redis://core_redis:6379
             - MONGO_URI=mongodb://core_mongodb:27017/?replicaSet=rs0
             - COMMUNICATION_API_URL=http://communication:3002/api/v1
@@ -68,7 +68,7 @@ services:
             - APP_REGISTRY_KEY=${APP_REGISTRY_KEY}
             - ENV=${ENV}
             - ORIGIN=http://access_control:3001
-            - CLIENT_URL=${PUBLIC_ORIGIN}
+            - CLIENT_URL=${CLIENT_URL}
             - REDIS_URI=redis://core_redis:6379
             - MONGO_URI=mongodb://core_mongodb:27017/?replicaSet=rs0
             - ACCESS_POINT_API_URL=http://access_point:3000/api/v1
@@ -88,7 +88,7 @@ services:
             - APP_REGISTRY_KEY=${APP_REGISTRY_KEY}
             - ENV=${ENV}
             - ORIGIN=http://communication:3002
-            - CLIENT_URL=${PUBLIC_ORIGIN}
+            - CLIENT_URL=${CLIENT_URL}
             - REDIS_URI=redis://core_redis:6379
             - MONGO_URI=mongodb://core_mongodb:27017/?replicaSet=rs0
             - ACCESS_POINT_API_URL=http://access_point:3000/api/v1
@@ -135,7 +135,7 @@ services:
             - APP_REGISTRY_KEY=${APP_REGISTRY_KEY}
             - ENV=${ENV}
             - ORIGIN=http://academic_service:3010
-            - CLIENT_URL=${PUBLIC_ORIGIN}
+            - CLIENT_URL=${CLIENT_URL}
             - REDIS_URI=redis://service_redis:6379
             - MONGO_URI=mongodb://service_mongodb:27018/?replicaSet=rs1
             - ACCESS_POINT_API_URL=http://access_point:3000/api/v1

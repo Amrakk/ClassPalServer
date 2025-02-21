@@ -31,7 +31,7 @@ export default class ApiGateway {
                             if (user) {
                                 proxyReq.setHeader("x-user-id", `${user._id ?? ""}`);
                                 proxyReq.setHeader("x-user-role", `${user.role ?? ""}`);
-                                proxyReq.setHeader("x-user-name", `${toLowerNonAccentVietnamese(user.name ?? "")}`);
+                                proxyReq.setHeader("x-user-name", `${encodeURIComponent(user.name ?? "")}`);
                             }
                         } catch (e) {
                             proxyReq.setHeader("x-error", `1`);
@@ -58,7 +58,7 @@ export default class ApiGateway {
                             if (user) {
                                 proxyReq.setHeader("x-user-id", `${user._id ?? ""}`);
                                 proxyReq.setHeader("x-user-role", `${user.role ?? ""}`);
-                                proxyReq.setHeader("x-user-name", `${toLowerNonAccentVietnamese(user.name ?? "")}`);
+                                proxyReq.setHeader("x-user-name", `${encodeURIComponent(user.name ?? "")}`);
                             }
                         } catch (e) {
                             proxyReq.setHeader("x-error", `1`);
@@ -90,7 +90,7 @@ export default class ApiGateway {
                         if (user) {
                             proxyReq.setHeader("x-user-id", `${user._id ?? ""}`);
                             proxyReq.setHeader("x-user-role", `${user.role ?? ""}`);
-                            proxyReq.setHeader("x-user-name", `${toLowerNonAccentVietnamese(user.name ?? "")}`);
+                            proxyReq.setHeader("x-user-name", `${encodeURIComponent(user.name ?? "")}`);
                         }
                     } catch (e) {
                         proxyReq.setHeader("x-error", `1`);
