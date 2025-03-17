@@ -2,7 +2,7 @@ import ApiController from "../../apiController.js";
 import UserService from "../../../services/internal/user.js";
 import { setAccToken, setRefToken } from "../../../utils/tokenHandlers.js";
 import { googleRedirect } from "../../../middlewares/googleAuthentication.js";
-import { CLIENT_URL, RESPONSE_CODE, RESPONSE_MESSAGE } from "../../../constants.js";
+import { CLIENT_URL, GOOGLE_REDIRECT_PATH, RESPONSE_CODE, RESPONSE_MESSAGE } from "../../../constants.js";
 
 import type { IUser } from "../../../interfaces/database/user.js";
 import type { IReqAuth } from "../../../interfaces/api/request.js";
@@ -40,7 +40,7 @@ export const googleCallback = ApiController.callbackFactory<{}, {}, IResLogin>(a
 
         await Promise.all([setAccToken(user._id, res), setRefToken(user._id, res)]);
 
-        return res.redirect(`${CLIENT_URL}/home`);
+        return res.redirect(`${CLIENT_URL}${GOOGLE_REDIRECT_PATH}`);
     } catch (err) {
         next(err);
     }
