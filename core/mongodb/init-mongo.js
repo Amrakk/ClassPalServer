@@ -1,15 +1,16 @@
 db = db.getSiblingDB("ClassPal");
 
 db.User.insertOne({
-    name: "Duy Nguyen Hoang",
-    email: "hoangduy12823@gmail.com",
-    password: "6f770bdc06c9a071:72a1c3c3a4d9ec445503be14f8b589d98f22cadf6a34a27d71ab7a929e3d6039",
-    role: 0,
+    _id: ObjectId("678dfc60cd7db88d12eaaa58"),
+    name: "Đinh Hoàng Phúc",
+    _name: "dinh hoang phuc",
+    email: "phucdinn1803@gmail.com",
+    password: "$2b$10$0UfuptHPmo13YAVSHCULUu6VFKoqsHY7YXyuR4D1R/Fw5vugSgXKa",
+    phoneNumber: "0979420024",
+    avatarUrl: "https://i.ibb.co/DKcyw0Q/ef4b64d30186.png",
+    role: 1,
     status: 0,
-    phoneNumber: "0123456789",
-    avatarUrl: "https://lh3.googleusercontent.com/a/ACg8ocKSZsuWOmuaWBJSJKqP6phJGtleH6rdgGla3TEVfGPItDBquQ=s96-c",
-    updatedAt: new Date(1733747651979),
-    createdAt: new Date(1733747651979),
     socialMediaAccounts: [],
-    _name: "duy nguyen hoang",
+    createdAt: new Date("2025-01-20T07:33:52.364Z"),
+    updatedAt: new Date("2025-02-19T17:55:47.672Z"),
 });

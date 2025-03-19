@@ -5,11 +5,13 @@ services:
 
     core_mongodb:
         build: ./core/mongodb
-        command: ["--replSet", "rs0", "--bind_ip_all", "--port", "27017"]
         expose:
             - "27017"
         healthcheck:
-            test: echo "try { rs.status() } catch (err) { rs.initiate({_id:'rs0',members:[{_id:0,host:'core_mongodb:27017'}]}) }" | mongosh --port 27017 --quiet
+            test: >
+                sh -c 'mongosh --port 27017 --quiet --eval "
+                try { rs.status().ok }
+                catch (err) { rs.initiate({_id: "rs0", members: [{_id: 0, host: "core_mongodb:27017"}]}) }"'
             interval: 5s
             timeout: 30s
             start_period: 0s
@@ -106,7 +108,13 @@ services:
 
     service_mongodb:
         image: mongo:noble
-        command: ["--replSet", "rs1", "--bind_ip_all", "--port", "27018"]
+        command: >
+            sh -c 'mongod --replSet rs1 --bind_ip_all --port 27018 & 
+            sleep 5 &&
+            mongosh --port 27018 --quiet --eval "
+            try { rs.status() } 
+            catch (err) { rs.initiate({_id: \"rs1\", members: [{_id: 0, host: \"service_mongodb:27018\"}]}) }" &&
+            wait'
         expose:
             - "27018"
         healthcheck:
